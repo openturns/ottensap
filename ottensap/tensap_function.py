@@ -16,12 +16,12 @@ class CanonicalTensorFunction(ot.OpenTURNSPythonFunction):
         # CanonicalTensor.tensor_matrix_product
         space = self.space_
         for i, dim in enumerate(self.dims_):
-            space[dim] = np.matmul(matrices[i], space[dim])
+            space[dim] = matrices[i] @ space[dim]
         # CanonicalTensor.eval_diag
         out = space[self.dims_[0]]
         for k in self.dims_[1:]:
             out *= space[k]
-        out = np.matmul(out, self.data_)
+        out = out @ self.data_
         return [out]
 
 

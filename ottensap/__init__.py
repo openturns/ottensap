@@ -1,3 +1,1 @@
-from . tensap_function import *
-
-
+from . tensap_function import TensapFunction
