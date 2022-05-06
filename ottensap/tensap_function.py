@@ -49,7 +49,10 @@ def TensapFunction(ft):
     if isinstance(ft.tensor, tensap.CanonicalTensor):
         return ot.Function(CanonicalTensorFunction(polyColl, ft.tensor.space, ft.tensor.core.data, dims))
     elif isinstance(ft.tensor, tensap.FullTensor):
-        raise NotImplementedError
+        raise NotImplementedError('FullTensor')
     elif isinstance(ft.tensor, tensap.SparseTensor):
-        raise NotImplementedError
-
+        raise NotImplementedError('SparseTensor')
+    elif isinstance(ft.tensor, tensap.TreeBasedTensor):
+        raise NotImplementedError('TreeBasedTensor')
+    else:
+        raise NotImplementedError(f"Unknown tensor type: {ft.tensor.__class__.__name__}")
