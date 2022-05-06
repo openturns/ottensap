@@ -44,8 +44,9 @@ def test_canonical():
 
     F, OUTPUT = SOLVER.solve()
 
-    x = [0.0]*8
+    x = X.mean()
     y_ref = F.eval(x)
-    y = ottensap.TensapFunction(F, x)
+    otf = ottensap.TensapFunction(F)
+    y = otf(x)
     print(x, y, y_ref)
     assert_almost_equal(y, y_ref, decimal=3)

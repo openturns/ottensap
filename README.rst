@@ -1,8 +1,10 @@
 .. image:: https://github.com/openturns/ottensap/actions/workflows/build.yml/badge.svg?branch=master
     :target: https://github.com/openturns/ottensap/actions/workflows/build.yml
 
-otensap
-=======
+ottensap
+========
+Allows to transpose metamodels learned thanks to the tensap package (https://anthony-nouy.github.io/tensap/)
+to OpenTURNS functions.
 
 Example::
 
@@ -40,6 +42,7 @@ Example::
     SOLVER.model_selection_options['type'] = 'test_error'
     F, OUTPUT = SOLVER.solve()    
     
-    # the fun part:
+    # to the OT world
     otf = ottensap.TensapFunction(F)
-
+    x = X.mean()
+    y = otf(x)

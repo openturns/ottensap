@@ -2,7 +2,30 @@ import tensap
 import openturns as ot
 import numpy as np
 
-def TensapFunction(ft, x):
+class CanonicalTensorFunction(ot.OpenTURNSPythonFunction):
+    def __init__(self, polyColl, space, data, dims):
+        super(CanonicalTensorFunction, self).__init__(len(dims), 1)
+        self.polyColl_ = polyColl
+        self.space_ = space
+        self.data_ = data
+        self.dims_ = dims
+
+    def _exec(self, x):
+        dimension = len(self.dims_)
+        matrices = [[self.polyColl_[i].build(j)(x[i]) for j in range(dimension + 1)] for i in range(dimension)]
+        # CanonicalTensor.tensor_matrix_product
+        space = self.space_
+        for i, dim in enumerate(self.dims_):
+            space[dim] = np.matmul(matrices[i], space[dim])
+        # CanonicalTensor.eval_diag
+        out = space[self.dims_[0]]
+        for k in self.dims_[1:]:
+            out *= space[k]
+        out = np.matmul(out, self.data_)
+        return [out]
+
+
+def TensapFunction(ft):
     if not isinstance(ft, tensap.FunctionalTensor):
         raise NotImplementedError(f"Unknown type: {ft.__class__.__name__}")
     if not isinstance(ft.bases, tensap.FunctionalBases):
@@ -22,20 +45,9 @@ def TensapFunction(ft, x):
             raise NotImplementedError(f"Unknown measure type: {measure.__class__.__name__}")
     distribution = ot.ComposedDistribution(marginals)
     polyColl = [ot.StandardDistributionPolynomialFactory(ot.AdaptiveStieltjesAlgorithm(marginal)) for marginal in marginals]
-    dimension = distribution.getDimension()
-    matrices = [[polyColl[i].build(j)(x[0]) for j in range(dimension + 1)] for i in range(dimension)]
-    dims = list(range(dimension))
+    dims = list(range(distribution.getDimension()))
     if isinstance(ft.tensor, tensap.CanonicalTensor):
-        # tensor_matrix_product
-        space = ft.tensor.space
-        for i, dim in enumerate(dims):
-            space[dim] = np.matmul(matrices[i], space[dim])
-        # eval_diag
-        out = space[dims[0]]
-        for k in dims[1:]:
-            out *= space[k]
-        out = np.matmul(out, ft.tensor.core.data)
-        return [out]
+        return ot.Function(CanonicalTensorFunction(polyColl, ft.tensor.space, ft.tensor.core.data, dims))
     elif isinstance(ft.tensor, tensap.FullTensor):
         raise NotImplementedError
     elif isinstance(ft.tensor, tensap.SparseTensor):
