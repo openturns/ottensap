@@ -2,6 +2,14 @@ import tensap
 import openturns as ot
 import numpy as np
 
+class RawTensorFunction(ot.OpenTURNSPythonFunction):
+    def __init__(self, ft):
+        super(RawTensorFunction, self).__init__(len(ft.bases.bases), 1)
+        self.ft_ = ft
+
+    def _exec(self, x):
+        return self.ft_.eval(np.array(x))
+
 class CanonicalTensorFunction(ot.OpenTURNSPythonFunction):
     def __init__(self, polyColl, space, data, dims):
         super(CanonicalTensorFunction, self).__init__(len(dims), 1)
@@ -46,13 +54,16 @@ def TensapFunction(ft):
     distribution = ot.ComposedDistribution(marginals)
     polyColl = [ot.StandardDistributionPolynomialFactory(ot.AdaptiveStieltjesAlgorithm(marginal)) for marginal in marginals]
     dims = list(range(distribution.getDimension()))
-    if isinstance(ft.tensor, tensap.CanonicalTensor):
-        return ot.Function(CanonicalTensorFunction(polyColl, ft.tensor.space, ft.tensor.core.data, dims))
-    elif isinstance(ft.tensor, tensap.FullTensor):
-        raise NotImplementedError('FullTensor')
-    elif isinstance(ft.tensor, tensap.SparseTensor):
-        raise NotImplementedError('SparseTensor')
-    elif isinstance(ft.tensor, tensap.TreeBasedTensor):
-        raise NotImplementedError('TreeBasedTensor')
-    else:
-        raise NotImplementedError(f"Unknown tensor type: {ft.tensor.__class__.__name__}")
+    try:
+        if isinstance(ft.tensor, tensap.CanonicalTensor):
+            return ot.Function(CanonicalTensorFunction(polyColl, ft.tensor.space, ft.tensor.core.data, dims))
+        elif isinstance(ft.tensor, tensap.FullTensor):
+            raise NotImplementedError('FullTensor')
+        elif isinstance(ft.tensor, tensap.SparseTensor):
+            raise NotImplementedError('SparseTensor')
+        elif isinstance(ft.tensor, tensap.TreeBasedTensor):
+            raise NotImplementedError('TreeBasedTensor')
+        else:
+            raise NotImplementedError(f"Unknown tensor type: {ft.tensor.__class__.__name__}")
+    except NotImplementedError:
+        return ot.Function(RawTensorFunction(ft))

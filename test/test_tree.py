@@ -2,9 +2,8 @@
 import numpy as np
 import tensap
 import ottensap
-import pytest
+from numpy.testing import assert_almost_equal
 
-@pytest.mark.skip
 def test_tree():
     # %% Function to approximate
     CHOICE = 2
