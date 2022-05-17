@@ -13,5 +13,18 @@ jobs:
         run: |
           conda install -y openturns pytest tensap "tensorflow>=2"
           python setup.py install
-          pytest test -s
+          pytest -s
 
+  conda-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniforge-version: latest
+      - name: Build
+        run: |
+          conda install -y openturns pytest tensap pip
+          pip install tensorflow --upgrade
+          python setup.py install
+          pytest -s
