@@ -16,7 +16,7 @@ setup(
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 3',
     ],
-    keywords='Karhunen-Loeve',
+    keywords='Tensor',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     install_requires=['tensap' ,'openturns'],
     package_data={},
