@@ -4,6 +4,7 @@ import tensap
 import ottensap
 from numpy.testing import assert_almost_equal
 
+
 def test_tree():
     # %% Function to approximate
     CHOICE = 2

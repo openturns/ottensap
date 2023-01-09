@@ -2,6 +2,7 @@ import tensap
 import openturns as ot
 import numpy as np
 
+
 class RawTensorFunction(ot.OpenTURNSPythonFunction):
     def __init__(self, ft):
         super(RawTensorFunction, self).__init__(len(ft.bases.bases), 1)
@@ -9,6 +10,7 @@ class RawTensorFunction(ot.OpenTURNSPythonFunction):
 
     def _exec(self, x):
         return self.ft_.eval(np.array(x))
+
 
 class CanonicalTensorFunction(ot.OpenTURNSPythonFunction):
     def __init__(self, polyColl, space, data, dims):

@@ -18,7 +18,7 @@ setup(
     ],
     keywords='Tensor',
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    install_requires=['tensap' ,'openturns'],
+    install_requires=['tensap', 'openturns'],
     package_data={},
 
 )

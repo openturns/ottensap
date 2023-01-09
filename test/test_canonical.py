@@ -4,14 +4,14 @@ from numpy.testing import assert_almost_equal
 import numpy as np
 np.random.seed(0)
 
+
 def test_canonical():
     # From tensap tutorial_tensor_learning_CanonicalTensorLearning.py:
     fun, X = tensap.multivariate_functions_benchmark('borehole')
     ORDER = X.size
     DEGREE = 8
     BASES = [tensap.PolynomialFunctionalBasis(X_TRAIN.orthonormal_polynomials(),
-                                          range(DEGREE+1)) for
-            X_TRAIN in X.random_variables]
+             range(DEGREE+1)) for X_TRAIN in X.random_variables]
     BASES = tensap.FunctionalBases(BASES)
     NUM_TRAIN = 1000
     X_TRAIN = X.random(NUM_TRAIN)
