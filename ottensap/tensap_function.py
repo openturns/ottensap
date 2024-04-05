@@ -53,11 +53,14 @@ def TensapFunction(ft):
             marginals.append(ot.Histogram(measure.values.flatten(), measure.probabilities))
         else:
             raise NotImplementedError(f"Unknown measure type: {measure.__class__.__name__}")
-    distribution = ot.ComposedDistribution(marginals)
-    polyColl = [ot.StandardDistributionPolynomialFactory(ot.AdaptiveStieltjesAlgorithm(marginal)) for marginal in marginals]
-    dims = list(range(distribution.getDimension()))
     try:
         if isinstance(ft.tensor, tensap.CanonicalTensor):
+            if hasattr(ot, "JointDistribution"):
+                distribution = ot.JointDistribution(marginals)
+            else:
+                distribution = ot.ComposedDistribution(marginals)
+            polyColl = [ot.StandardDistributionPolynomialFactory(ot.AdaptiveStieltjesAlgorithm(marginal)) for marginal in marginals]
+            dims = list(range(distribution.getDimension()))
             return ot.Function(CanonicalTensorFunction(polyColl, ft.tensor.space, ft.tensor.core.data, dims))
         elif isinstance(ft.tensor, tensap.FullTensor):
             raise NotImplementedError('FullTensor')
